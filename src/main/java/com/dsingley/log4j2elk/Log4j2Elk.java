@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class Log4j2Elk {
 
-    public void configure(ElkConfigurationProvider elkConfigurationProvider) {
-        configure(elkConfigurationProvider.getElkConfiguration());
+    public ElkConfiguration configure(ElkConfigurationProvider elkConfigurationProvider) {
+        return configure(elkConfigurationProvider.getElkConfiguration());
     }
 
     @SneakyThrows
-    public void configure(ElkConfiguration elkConfiguration) {
+    public ElkConfiguration configure(ElkConfiguration elkConfiguration) {
         URL url = new URL(String.format("%s/%s/_doc/", elkConfiguration.getBaseUrl(), elkConfiguration.getIndexName()));
 
         LoggerContext loggerContext = LoggerContext.getContext(false);
@@ -67,7 +67,10 @@ public class Log4j2Elk {
         asyncHttpElasticsearchAppender.start();
         configuration.addAppender(asyncHttpElasticsearchAppender);
 
-        configuration.getRootLogger().addAppender(asyncHttpElasticsearchAppender, null, null);
-        log.info("asynchronously sending log messages to: {}", url);
+        configuration.getLoggers().values().forEach(loggerConfig ->
+                loggerConfig.addAppender(asyncHttpElasticsearchAppender, null, null)
+        );
+        log.info("asynchronously sending log messages to {}", url);
+        return elkConfiguration;
     }
 }

@@ -14,8 +14,7 @@ import static com.dsingley.log4j2elk.EnviornmentVariableElkConfigurationProvider
 public class Test {
 
     public static void main(String[] args) {
-        ElkConfiguration elkConfiguration = Log4j2Elk.configure(new EnviornmentVariableElkConfigurationProvider(Test.class, "test"));
-        log.info("{}: {}", FIELD_INSTANCE, elkConfiguration.getValue(FIELD_INSTANCE));
+        Log4j2Elk.configure(new EnviornmentVariableElkConfigurationProvider(Test.class, "test"));
 
         for (int i = 0; i < 2; i++) {
             try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable("i", String.valueOf(i))) {

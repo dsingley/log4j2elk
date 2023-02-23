@@ -71,6 +71,7 @@ public class Log4j2Elk {
                 loggerConfig.addAppender(asyncHttpElasticsearchAppender, null, null)
         );
         log.info("asynchronously sending log messages to {}", url);
+        elkConfiguration.getAdditionalFields().forEach((key, value) -> log.info("{}: {}", key, value));
         return elkConfiguration;
     }
 }

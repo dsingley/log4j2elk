@@ -10,6 +10,7 @@ import java.util.Map;
 @Builder
 @Getter
 public class ElkConfiguration {
+    @Builder.Default boolean enabled = true;
     @NonNull String baseUrl;
     @NonNull String indexName;
     @Singular Map<String, String> additionalFields;

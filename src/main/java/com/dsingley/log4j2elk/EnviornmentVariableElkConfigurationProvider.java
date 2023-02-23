@@ -9,8 +9,12 @@ import java.util.UUID;
  * Provide {@link ElkConfiguration} with <code>baseUrl</code> from the environment variable
  * <code>ELK_ELASTICSEARCH_BASE_URL</code> and with <code>indexName</code>, and <code>additionalFields</code>
  * based on the specified service name and specified (or default) environment and instance values.
+ * <p>
+ * <code>enabled</code> unless the environment variable <code>ELK_ENABLED</code> is set
+ * and not equal to <code>true</code>.
  */
 public class EnviornmentVariableElkConfigurationProvider implements ElkConfigurationProvider {
+    private static final String ELK_ENABLED = "ELK_ENABLED";
     private static final String ELK_ELASTICSEARCH_BASE_URL = "ELK_ELASTICSEARCH_BASE_URL";
     private static final String DEFAULT_ELK_ELASTICSEARCH_BASE_URL = "http://localhost:9200";
     private static final String ELK_ENVIRONMENT = "ELK_ENVIRONMENT";
@@ -65,6 +69,8 @@ public class EnviornmentVariableElkConfigurationProvider implements ElkConfigura
      * @param instance    a discriminator for different sources of messages from the same service and environment
      */
     public EnviornmentVariableElkConfigurationProvider(@NonNull String service, String environment, String instance) {
+        boolean enabled = System.getenv(ELK_ENABLED) == null || "true".equalsIgnoreCase(System.getenv(ELK_ENABLED));
+
         String baseUrl = System.getenv(ELK_ELASTICSEARCH_BASE_URL);
         if (baseUrl == null || baseUrl.trim().length() == 0) {
             baseUrl = DEFAULT_ELK_ELASTICSEARCH_BASE_URL;
@@ -88,6 +94,7 @@ public class EnviornmentVariableElkConfigurationProvider implements ElkConfigura
         }
 
         elkConfiguration = ElkConfiguration.builder()
+                .enabled(enabled)
                 .baseUrl(baseUrl)
                 .indexName(indexName)
                 .additionalField(FIELD_SERVICE, service)

@@ -3,7 +3,6 @@ package com.dsingley.log4j2elk;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AsyncAppender;
@@ -13,10 +12,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.layout.template.json.JsonTemplateLayout;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @UtilityClass
@@ -28,6 +23,11 @@ public class Log4j2Elk {
 
     @SneakyThrows
     public ElkConfiguration configure(ElkConfiguration elkConfiguration) {
+        if (!elkConfiguration.isEnabled()) {
+            log.warn("sending log messages to ELK is not enabled");
+            return elkConfiguration;
+        }
+
         URL url = new URL(String.format("%s/%s/_doc/", elkConfiguration.getBaseUrl(), elkConfiguration.getIndexName()));
 
         LoggerContext loggerContext = LoggerContext.getContext(false);

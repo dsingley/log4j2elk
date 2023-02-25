@@ -10,7 +10,16 @@ import java.util.Map;
 @Builder
 @Getter
 public class ElkConfiguration {
-    String baseUrl;
-    String indexName;
+    @Builder.Default boolean enabled = true;
+    @NonNull String baseUrl;
+    @NonNull String indexName;
     @Singular Map<String, String> additionalFields;
+
+    public String getValue(String key) {
+        return additionalFields.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(key))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+    }
 }

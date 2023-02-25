@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1} %X - %m%n</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c %X - %m%n</Property>
     </Properties>
 
     <Appenders>
@@ -11,7 +11,15 @@
     </Appenders>
 
     <Loggers>
-        <Root level="info">
+        <Logger name="com.dsingley.log4j2elk" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Logger name="test.one" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

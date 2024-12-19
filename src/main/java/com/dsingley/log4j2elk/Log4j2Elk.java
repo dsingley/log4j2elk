@@ -16,8 +16,8 @@ import java.net.URL;
 @Slf4j
 @UtilityClass
 public class Log4j2Elk {
-    static final String PROPERTY_ASYNC_QUEUE_FULL_POLICY =  "log4j2.asyncQueueFullPolicy";
-    static final String PROPERTY_DISCARD_THRESHOLD =  "log4j2.discardThreshold";
+    static final String PROPERTY_ASYNC_QUEUE_FULL_POLICY = "log4j2.asyncQueueFullPolicy";
+    static final String PROPERTY_DISCARD_THRESHOLD = "log4j2.discardThreshold";
 
     public ElkConfiguration configure(ElkConfigurationProvider elkConfigurationProvider) {
         return configure(elkConfigurationProvider.getElkConfiguration());

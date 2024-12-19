@@ -2,8 +2,12 @@ package com.dsingley.log4j2elk;
 
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.logging.log4j.Level;
 
 import java.util.UUID;
+import java.util.function.Function;
+
+import static com.dsingley.log4j2elk.ElkConfiguration.*;
 
 /**
  * Provide {@link ElkConfiguration} with <code>baseUrl</code> from the environment variable
@@ -14,14 +18,22 @@ import java.util.UUID;
  * and not equal to <code>true</code>.
  */
 public class EnvironmentVariableElkConfigurationProvider implements ElkConfigurationProvider {
-    private static final String ELK_ENABLED = "ELK_ENABLED";
-    private static final String ELK_ELASTICSEARCH_BASE_URL = "ELK_ELASTICSEARCH_BASE_URL";
-    private static final String DEFAULT_ELK_ELASTICSEARCH_BASE_URL = "http://localhost:9200";
-    private static final String ELK_ENVIRONMENT = "ELK_ENVIRONMENT";
-    private static final String DEFAULT_ELK_ENVIRONMENT = "production";
+    private static final String ENABLED = "ELK_ENABLED";
+    private static final String ELASTICSEARCH_BASE_URL = "ELK_ELASTICSEARCH_BASE_URL";
+    private static final String DEFAULT_ELASTICSEARCH_BASE_URL = "http://localhost:9200";
+    private static final String ENVIRONMENT = "ELK_ENVIRONMENT";
+    private static final String DEFAULT_ENVIRONMENT = "production";
     public static final String FIELD_SERVICE = "service";
     public static final String FIELD_ENVIRONMENT = "environment";
     public static final String FIELD_INSTANCE = "instance";
+
+    private static final String CONNECT_TIMEOUT_MS = "ELK_CONNECT_TIMEOUT_MS";
+    private static final String READ_TIMEOUT_MS = "ELK_READ_TIMEOUT_MS";
+    private static final String BLOCKING = "ELK_BLOCKING";
+    private static final String BUFFER_SIZE = "ELK_BUFFER_SIZE";
+    private static final String SHUTDOWN_TIMEOUT_MS = "ELK_SHUTDOWN_TIMEOUT_MS";
+    private static final String ASYNC_QUEUE_FULL_POLICY = "ELK_ASYNC_QUEUE_FULL_POLICY";
+    private static final String DISCARD_THRESHOLD = "ELK_DISCARD_THRESHOLD";
 
     @Getter private final ElkConfiguration elkConfiguration;
 
@@ -69,17 +81,15 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
      * @param instance    a discriminator for different sources of messages from the same service and environment
      */
     public EnvironmentVariableElkConfigurationProvider(@NonNull String service, String environment, String instance) {
-        boolean enabled = System.getenv(ELK_ENABLED) == null || "true".equalsIgnoreCase(System.getenv(ELK_ENABLED));
-
-        String baseUrl = System.getenv(ELK_ELASTICSEARCH_BASE_URL);
+        String baseUrl = System.getenv(ELASTICSEARCH_BASE_URL);
         if (baseUrl == null || baseUrl.trim().length() == 0) {
-            baseUrl = DEFAULT_ELK_ELASTICSEARCH_BASE_URL;
+            baseUrl = DEFAULT_ELASTICSEARCH_BASE_URL;
         }
 
         if (environment == null || environment.trim().length() == 0) {
-            environment = System.getenv(ELK_ENVIRONMENT);
+            environment = System.getenv(ENVIRONMENT);
             if (environment == null || environment.trim().length() == 0) {
-                environment = DEFAULT_ELK_ENVIRONMENT;
+                environment = DEFAULT_ENVIRONMENT;
             }
         }
 
@@ -94,12 +104,27 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
         }
 
         elkConfiguration = ElkConfiguration.builder()
-                .enabled(enabled)
+                .enabled(getOrDefault(ENABLED, DEFAULT_ENABLED, Boolean::parseBoolean))
                 .baseUrl(baseUrl)
                 .indexName(indexName)
                 .additionalField(FIELD_SERVICE, service)
                 .additionalField(FIELD_ENVIRONMENT, environment)
                 .additionalField(FIELD_INSTANCE, instance)
+                .connectTimeoutMs(getOrDefault(CONNECT_TIMEOUT_MS, DEFAULT_CONNECT_TIMEOUT_MS, Integer::parseInt))
+                .readTimeoutMs(getOrDefault(READ_TIMEOUT_MS, DEFAULT_READ_TIMEOUT_MS, Integer::parseInt))
+                .blocking(getOrDefault(BLOCKING, DEFAULT_BLOCKING, Boolean::parseBoolean))
+                .bufferSize(getOrDefault(BUFFER_SIZE, DEFAULT_BUFFER_SIZE, Integer::parseInt))
+                .shutdownTimeoutMs(getOrDefault(SHUTDOWN_TIMEOUT_MS, DEFAULT_SHUTDOWN_TIMEOUT_MS, Integer::parseInt))
+                .asyncQueueFullPolicy(getOrDefault(ASYNC_QUEUE_FULL_POLICY, DEFAULT_ASYNC_QUEUE_FULL_POLICY, Function.identity()))
+                .discardThreshold(getOrDefault(DISCARD_THRESHOLD, DEFAULT_DISCARD_THRESHOLD, Level::getLevel))
                 .build();
+    }
+
+    private static <T> T getOrDefault(String name, T defaultValue, Function<String,T> conversionFunction) {
+        String value = System.getenv(name);
+        if (value != null && !value.trim().isEmpty()) {
+            return conversionFunction.apply(value);
+        }
+        return defaultValue;
     }
 }

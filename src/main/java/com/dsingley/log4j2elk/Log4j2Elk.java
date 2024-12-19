@@ -16,6 +16,8 @@ import java.net.URL;
 @Slf4j
 @UtilityClass
 public class Log4j2Elk {
+    static final String PROPERTY_ASYNC_QUEUE_FULL_POLICY =  "log4j2.asyncQueueFullPolicy";
+    static final String PROPERTY_DISCARD_THRESHOLD =  "log4j2.discardThreshold";
 
     public ElkConfiguration configure(ElkConfigurationProvider elkConfigurationProvider) {
         return configure(elkConfigurationProvider.getElkConfiguration());
@@ -37,6 +39,8 @@ public class Log4j2Elk {
                 .setName("httpElasticsearchAppender")
                 .setConfiguration(configuration)
                 .setUrl(url)
+                .setConnectTimeoutMillis(elkConfiguration.getConnectTimeoutMs())
+                .setReadTimeoutMillis(elkConfiguration.getReadTimeoutMs())
                 .setLayout(
                         JsonTemplateLayout.newBuilder()
                                 .setConfiguration(configuration)
@@ -58,6 +62,9 @@ public class Log4j2Elk {
         Appender asyncHttpElasticsearchAppender = AsyncAppender.newBuilder()
                 .setName("asyncHttpElasticsearchAppender")
                 .setConfiguration(configuration)
+                .setBlocking(elkConfiguration.isBlocking())
+                .setBufferSize(elkConfiguration.getBufferSize())
+                .setShutdownTimeout(elkConfiguration.getShutdownTimeoutMs())
                 .setAppenderRefs(
                         new AppenderRef[]{
                                 AppenderRef.createAppenderRef(httpElasticsearchAppender.getName(), null, null)
@@ -66,6 +73,9 @@ public class Log4j2Elk {
                 .build();
         asyncHttpElasticsearchAppender.start();
         configuration.addAppender(asyncHttpElasticsearchAppender);
+
+        System.setProperty(PROPERTY_ASYNC_QUEUE_FULL_POLICY, elkConfiguration.getAsyncQueueFullPolicy());
+        System.setProperty(PROPERTY_DISCARD_THRESHOLD, elkConfiguration.getDiscardThreshold().name());
 
         configuration.getLoggers().values().forEach(loggerConfig ->
                 loggerConfig.addAppender(asyncHttpElasticsearchAppender, null, null)

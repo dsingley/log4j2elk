@@ -9,8 +9,12 @@ import test.two.Two;
 @Slf4j
 public class Test {
 
-    public static void main(String[] args) {
-        Log4j2Elk.configure(new EnvironmentVariableElkConfigurationProvider(Test.class, "test"));
+    public static void main(String[] args) throws Exception {
+        ElkConfiguration configuration = ElkConfiguration.builder()
+                .baseUrl("http://localhost:9200")
+                .indexName("test")
+                .build();
+        Log4j2Elk.configure(configuration);
 
         for (int i = 0; i < 2; i++) {
             try (MDC.MDCCloseable mdcCloseable = MDC.putCloseable("i", String.valueOf(i))) {

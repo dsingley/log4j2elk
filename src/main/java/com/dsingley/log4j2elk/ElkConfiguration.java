@@ -24,8 +24,9 @@ public class ElkConfiguration {
 
     // see https://logging.apache.org/log4j/2.x/manual/systemproperties.html#properties-async
     public static final String ASYNC_QUEUE_FULL_POLICY_DEFAULT = "Default";
-    public static final String ASYNC_QUEUE_FULL_POLICY_DISCARD = CustomDiscardingAsyncQueueFullPolicy.class.getName();
-    public static final String DEFAULT_ASYNC_QUEUE_FULL_POLICY = ASYNC_QUEUE_FULL_POLICY_DISCARD; // log4j2 default = Default
+    public static final String ASYNC_QUEUE_FULL_POLICY_DISCARD = "Discard";
+    public static final String ASYNC_QUEUE_FULL_POLICY_CUSTOM_DISCARD = CustomDiscardingAsyncQueueFullPolicy.class.getName();
+    public static final String DEFAULT_ASYNC_QUEUE_FULL_POLICY = ASYNC_QUEUE_FULL_POLICY_CUSTOM_DISCARD; // log4j2 default = Default
     public static final Level DEFAULT_DISCARD_THRESHOLD = Level.INFO;
 
     @Builder.Default boolean enabled = DEFAULT_ENABLED;

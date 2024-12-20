@@ -26,7 +26,6 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
     public static final String FIELD_SERVICE = "service";
     public static final String FIELD_ENVIRONMENT = "environment";
     public static final String FIELD_INSTANCE = "instance";
-
     private static final String CONNECT_TIMEOUT_MS = "ELK_CONNECT_TIMEOUT_MS";
     private static final String READ_TIMEOUT_MS = "ELK_READ_TIMEOUT_MS";
     private static final String BLOCKING = "ELK_BLOCKING";

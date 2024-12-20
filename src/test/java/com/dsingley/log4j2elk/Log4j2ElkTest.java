@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.Test;
 
 import static com.dsingley.log4j2elk.ElkConfiguration.DEFAULT_ASYNC_QUEUE_FULL_POLICY;
+import static com.dsingley.log4j2elk.ElkConfiguration.DEFAULT_DISCARD_THRESHOLD;
 import static com.dsingley.log4j2elk.Log4j2Elk.PROPERTY_ASYNC_QUEUE_FULL_POLICY;
 import static com.dsingley.log4j2elk.Log4j2Elk.PROPERTY_DISCARD_THRESHOLD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ class Log4j2ElkTest {
 
         assertAll(
                 () -> assertThat(System.getProperty(PROPERTY_ASYNC_QUEUE_FULL_POLICY)).isEqualTo(DEFAULT_ASYNC_QUEUE_FULL_POLICY),
-                () -> assertThat(System.getProperty(PROPERTY_DISCARD_THRESHOLD)).isEqualTo("INFO")
+                () -> assertThat(System.getProperty(PROPERTY_DISCARD_THRESHOLD)).isEqualTo(DEFAULT_DISCARD_THRESHOLD.name())
         );
     }
 

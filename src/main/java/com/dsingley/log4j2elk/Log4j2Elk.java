@@ -10,8 +10,12 @@ import org.apache.logging.log4j.core.appender.HttpAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.layout.template.json.JsonTemplateLayout;
+import org.apache.logging.log4j.status.StatusConsoleListener;
+import org.apache.logging.log4j.status.StatusLogger;
 
 import java.net.URL;
+
+import static org.apache.logging.log4j.Level.WARN;
 
 @Slf4j
 @UtilityClass
@@ -29,6 +33,13 @@ public class Log4j2Elk {
             log.warn("sending log messages to ELK is not enabled");
             return elkConfiguration;
         }
+
+        StatusConsoleListener statusConsoleListener = StatusLogger.getLogger().getFallbackListener();
+        if (statusConsoleListener.getStatusLevel().isMoreSpecificThan(WARN)) {
+            statusConsoleListener.setLevel(WARN);
+        }
+        System.setProperty(PROPERTY_ASYNC_QUEUE_FULL_POLICY, elkConfiguration.getAsyncQueueFullPolicy());
+        System.setProperty(PROPERTY_DISCARD_THRESHOLD, elkConfiguration.getDiscardThreshold().name());
 
         URL url = new URL(String.format("%s/%s/_doc/", elkConfiguration.getBaseUrl(), elkConfiguration.getIndexName()));
 
@@ -73,9 +84,6 @@ public class Log4j2Elk {
                 .build();
         asyncHttpElasticsearchAppender.start();
         configuration.addAppender(asyncHttpElasticsearchAppender);
-
-        System.setProperty(PROPERTY_ASYNC_QUEUE_FULL_POLICY, elkConfiguration.getAsyncQueueFullPolicy());
-        System.setProperty(PROPERTY_DISCARD_THRESHOLD, elkConfiguration.getDiscardThreshold().name());
 
         configuration.getLoggers().values().forEach(loggerConfig ->
                 loggerConfig.addAppender(asyncHttpElasticsearchAppender, null, null)

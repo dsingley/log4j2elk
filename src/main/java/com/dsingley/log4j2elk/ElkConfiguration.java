@@ -14,18 +14,18 @@ public class ElkConfiguration {
     public static final boolean DEFAULT_ENABLED = true;
 
     // see https://logging.apache.org/log4j/2.x/manual/appenders/network.html#HttpAppender
-    public static final int DEFAULT_CONNECT_TIMEOUT_MS = 0; // 10_000; // was 0
-    public static final int DEFAULT_READ_TIMEOUT_MS = 0; // 10_000; // was 0
+    public static final int DEFAULT_CONNECT_TIMEOUT_MS = 10_000; // log4j2 default = 0
+    public static final int DEFAULT_READ_TIMEOUT_MS = 10_000; // log4j2 default = 0
 
     // see https://logging.apache.org/log4j/2.x/manual/appenders/delegating.html#AsyncAppender
     public static final boolean DEFAULT_BLOCKING = true;
     public static final int DEFAULT_BUFFER_SIZE = 1024;
-    public static final int DEFAULT_SHUTDOWN_TIMEOUT_MS = 0; // 10_000; // was 0
+    public static final int DEFAULT_SHUTDOWN_TIMEOUT_MS = 30_000; // log4j2 default = 0
 
     // see https://logging.apache.org/log4j/2.x/manual/systemproperties.html#properties-async
     public static final String ASYNC_QUEUE_FULL_POLICY_DEFAULT = "Default";
-    public static final String ASYNC_QUEUE_FULL_POLICY_DISCARD = "Discard";
-    public static final String DEFAULT_ASYNC_QUEUE_FULL_POLICY = ASYNC_QUEUE_FULL_POLICY_DEFAULT; // ASYNC_QUEUE_FULL_POLICY_DISCARD; // was Default
+    public static final String ASYNC_QUEUE_FULL_POLICY_DISCARD = CustomDiscardingAsyncQueueFullPolicy.class.getName();
+    public static final String DEFAULT_ASYNC_QUEUE_FULL_POLICY = ASYNC_QUEUE_FULL_POLICY_DISCARD; // log4j2 default = Default
     public static final Level DEFAULT_DISCARD_THRESHOLD = Level.INFO;
 
     @Builder.Default boolean enabled = DEFAULT_ENABLED;

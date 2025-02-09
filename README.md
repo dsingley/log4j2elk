@@ -43,15 +43,17 @@ public static void main(String[] args) {
 
 `Log4j2Elk` relies on these two Log4j components to forward messages to Elasticsearch and has selected several default
 configuration values that are different from their Log4j default values. These values are configurable by both methods
-show above, are documented in [`ElkConfiguration`](src/main/java/com/dsingley/log4j2elk/ElkConfiguration.java) and
+shown above, are documented in [`ElkConfiguration`](src/main/java/com/dsingley/log4j2elk/ElkConfiguration.java), and
 summarized below.
 
-| log4j2elk parameter  | log4j2 default       | log4j2elk default (if different) |
-|:---------------------|:---------------------|:---------------------------------|
-| connectTimeoutMs     | 0 (infinite)         | 10,000                           |
-| readTimeoutMs        | 0 (infinite)         | 10,000                           |
-| blocking             | true                 |                                  |
-| bufferSize           | 1024                 |                                  |
-| shutdownTimeout      | 0 (wait until empty) | 30,000                           |
-| asyncQueueFullPolicy | [`Default`](https://logging.apache.org/log4j/2.x/javadoc/log4j-core/org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html) | [`CustomDiscardingAsyncQueueFullPolicy`](src/main/java/com/dsingley/log4j2elk/CustomDiscardingAsyncQueueFullPolicy.java) |
-| discardThreshold     | INFO                 |                                  |
+| log4j2elk parameter<sup>*</sup> | log4j2 default       | log4j2elk default (if different) |
+|:--------------------------------|:---------------------|:---------------------------------|
+| connectTimeoutMs                | 0 (infinite)         | 10,000                           |
+| readTimeoutMs                   | 0 (infinite)         | 10,000                           |
+| blocking                        | true                 |                                  |
+| bufferSize                      | 1024                 |                                  |
+| shutdownTimeout                 | 0 (wait until empty) | 30,000 (ms)                      |
+| asyncQueueFullPolicy            | [`Default`](https://logging.apache.org/log4j/2.x/javadoc/log4j-core/org/apache/logging/log4j/core/async/DefaultAsyncQueueFullPolicy.html) | [`CustomDiscardingAsyncQueueFullPolicy`](src/main/java/com/dsingley/log4j2elk/CustomDiscardingAsyncQueueFullPolicy.java) |
+| discardThreshold                | INFO                 |                                  |
+
+<sup>*</sup> corresponding environment variables are prefixed with `ELK_` and separated by `_`, e.g. `ELK_CONNECT_TIMEOUT_MS`

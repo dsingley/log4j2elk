@@ -27,8 +27,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com:dsingley/log4j2elk.git</connection>
-        <developerConnection>scm:git:ssh://github.com:dsingley/log4j2elk.git</developerConnection>
+        <connection>scm:git:https://github.com/dsingley/log4j2elk.git</connection>
+        <developerConnection>scm:git:git@github.com:dsingley/log4j2elk.git</developerConnection>
         <url>https://github.com/dsingley/log4j2elk</url>
     </scm>
 

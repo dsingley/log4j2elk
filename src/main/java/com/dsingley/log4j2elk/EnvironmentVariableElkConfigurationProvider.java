@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.apache.logging.log4j.Level;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -26,6 +28,7 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
     public static final String FIELD_SERVICE = "service";
     public static final String FIELD_ENVIRONMENT = "environment";
     public static final String FIELD_INSTANCE = "instance";
+    public static final String FIELD_HOSTNAME = "hostname";
     private static final String CONNECT_TIMEOUT_MS = "ELK_CONNECT_TIMEOUT_MS";
     private static final String READ_TIMEOUT_MS = "ELK_READ_TIMEOUT_MS";
     private static final String BLOCKING = "ELK_BLOCKING";
@@ -81,13 +84,13 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
      */
     public EnvironmentVariableElkConfigurationProvider(@NonNull String service, String environment, String instance) {
         String baseUrl = System.getenv(ELASTICSEARCH_BASE_URL);
-        if (baseUrl == null || baseUrl.trim().length() == 0) {
+        if (baseUrl == null || baseUrl.trim().isEmpty()) {
             baseUrl = DEFAULT_ELASTICSEARCH_BASE_URL;
         }
 
-        if (environment == null || environment.trim().length() == 0) {
+        if (environment == null || environment.trim().isEmpty()) {
             environment = System.getenv(ENVIRONMENT);
-            if (environment == null || environment.trim().length() == 0) {
+            if (environment == null || environment.trim().isEmpty()) {
                 environment = DEFAULT_ENVIRONMENT;
             }
         }
@@ -98,11 +101,11 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
                 environment.replaceAll("(?i)[^a-z0-9.]", "").toLowerCase()
         );
 
-        if (instance == null || instance.trim().length() == 0) {
+        if (instance == null || instance.trim().isEmpty()) {
             instance = UUID.randomUUID().toString().replace("-", "");
         }
 
-        elkConfiguration = ElkConfiguration.builder()
+        ElkConfigurationBuilder elkConfigurationBuilder = builder()
                 .enabled(getOrDefault(ENABLED, DEFAULT_ENABLED, Boolean::parseBoolean))
                 .baseUrl(baseUrl)
                 .indexName(indexName)
@@ -115,8 +118,16 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
                 .bufferSize(getOrDefault(BUFFER_SIZE, DEFAULT_BUFFER_SIZE, Integer::parseInt))
                 .shutdownTimeoutMs(getOrDefault(SHUTDOWN_TIMEOUT_MS, DEFAULT_SHUTDOWN_TIMEOUT_MS, Integer::parseInt))
                 .asyncQueueFullPolicy(getOrDefault(ASYNC_QUEUE_FULL_POLICY, DEFAULT_ASYNC_QUEUE_FULL_POLICY, Function.identity()))
-                .discardThreshold(getOrDefault(DISCARD_THRESHOLD, DEFAULT_DISCARD_THRESHOLD, Level::getLevel))
-                .build();
+                .discardThreshold(getOrDefault(DISCARD_THRESHOLD, DEFAULT_DISCARD_THRESHOLD, Level::getLevel));
+
+        try {
+            String hostname = InetAddress.getLocalHost().getCanonicalHostName();
+            elkConfigurationBuilder.additionalField(FIELD_HOSTNAME, hostname);
+        } catch (UnknownHostException e) {
+            // do nothing
+        }
+
+        elkConfiguration =  elkConfigurationBuilder.build();
     }
 
     private static <T> T getOrDefault(String name, T defaultValue, Function<String,T> conversionFunction) {

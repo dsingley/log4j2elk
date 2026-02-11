@@ -28,7 +28,8 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
     public static final String FIELD_SERVICE = "service";
     public static final String FIELD_ENVIRONMENT = "environment";
     public static final String FIELD_INSTANCE = "instance";
-    public static final String FIELD_HOSTNAME = "hostname";
+    public static final String FIELD_HOST_DOT_IP = "host.ip";
+    public static final String FIELD_HOST_DOT_NAME = "host.name";
     private static final String CONNECT_TIMEOUT_MS = "ELK_CONNECT_TIMEOUT_MS";
     private static final String READ_TIMEOUT_MS = "ELK_READ_TIMEOUT_MS";
     private static final String BLOCKING = "ELK_BLOCKING";
@@ -121,8 +122,9 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
                 .discardThreshold(getOrDefault(DISCARD_THRESHOLD, DEFAULT_DISCARD_THRESHOLD, Level::getLevel));
 
         try {
-            String hostname = InetAddress.getLocalHost().getCanonicalHostName();
-            elkConfigurationBuilder.additionalField(FIELD_HOSTNAME, hostname);
+            InetAddress localhost = InetAddress.getLocalHost();
+            elkConfigurationBuilder.additionalField(FIELD_HOST_DOT_IP, localhost.getHostAddress());
+            elkConfigurationBuilder.additionalField(FIELD_HOST_DOT_NAME, localhost.getCanonicalHostName());
         } catch (UnknownHostException e) {
             // do nothing
         }

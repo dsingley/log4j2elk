@@ -4,7 +4,7 @@
 
     <groupId>com.dsingley.log4j2elk</groupId>
     <artifactId>log4j2elk</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A package for indexing Log4j2 messages in Elasticsearch.</description>
@@ -28,7 +28,7 @@
         <connection>scm:git:https://github.com/dsingley/log4j2elk.git</connection>
         <developerConnection>scm:git:git@github.com:dsingley/log4j2elk.git</developerConnection>
         <url>https://github.com/dsingley/log4j2elk</url>
-      <tag>HEAD</tag>
+      <tag>v1.1.1</tag>
   </scm>
 
     <properties>

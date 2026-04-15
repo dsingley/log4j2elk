@@ -16,6 +16,8 @@ import static com.dsingley.log4j2elk.ElkConfiguration.*;
  * <code>ELK_ELASTICSEARCH_BASE_URL</code> and with <code>indexName</code>, and <code>additionalFields</code>
  * based on the specified service name and specified (or default) environment and instance values.
  * <p>
+ * <code>apiKey</code> from the environment variable <code>ELK_ELASTICSEARCH_API_KEY</code>.
+ * <p>
  * <code>enabled</code> unless the environment variable <code>ELK_ENABLED</code> is set
  * and not equal to <code>true</code>.
  */
@@ -23,6 +25,7 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
     private static final String ENABLED = "ELK_ENABLED";
     private static final String ELASTICSEARCH_BASE_URL = "ELK_ELASTICSEARCH_BASE_URL";
     private static final String DEFAULT_ELASTICSEARCH_BASE_URL = "http://localhost:9200";
+    private static final String ELASTICSEARCH_API_KEY = "ELK_ELASTICSEARCH_API_KEY";
     private static final String ENVIRONMENT = "ELK_ENVIRONMENT";
     private static final String DEFAULT_ENVIRONMENT = "production";
     public static final String FIELD_SERVICE = "service";
@@ -109,6 +112,7 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
         ElkConfigurationBuilder elkConfigurationBuilder = builder()
                 .enabled(getOrDefault(ENABLED, DEFAULT_ENABLED, Boolean::parseBoolean))
                 .baseUrl(baseUrl)
+                .apiKey(System.getenv(ELASTICSEARCH_API_KEY))
                 .indexName(indexName)
                 .additionalField(FIELD_SERVICE, service)
                 .additionalField(FIELD_ENVIRONMENT, environment)

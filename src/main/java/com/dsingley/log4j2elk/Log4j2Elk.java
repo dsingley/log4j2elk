@@ -9,11 +9,14 @@ import org.apache.logging.log4j.core.appender.AsyncAppender;
 import org.apache.logging.log4j.core.appender.HttpAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.layout.template.json.JsonTemplateLayout;
 import org.apache.logging.log4j.status.StatusConsoleListener;
 import org.apache.logging.log4j.status.StatusLogger;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.logging.log4j.Level.WARN;
 
@@ -46,10 +49,23 @@ public class Log4j2Elk {
         LoggerContext loggerContext = LoggerContext.getContext(false);
         Configuration configuration = loggerContext.getConfiguration();
 
+        List<Property> headers = new ArrayList<>();
+        elkConfiguration.getApiKey()
+                .ifPresent(apiKey -> {
+                    if (elkConfiguration.isSecure()) {
+                        Property authorization = Property.createProperty("Authorization", String.format("ApiKey %s", apiKey));
+                        headers.add(authorization);
+                    } else {
+                        log.warn("Authorization header with ApiKey not enabled because configuration is not secure");
+                    }
+                });
+        Property[] headerArray = headers.toArray(new Property[0]);
+
         Appender httpElasticsearchAppender = HttpAppender.newBuilder()
                 .setName("httpElasticsearchAppender")
                 .setConfiguration(configuration)
                 .setUrl(url)
+                .setHeaders(headerArray)
                 .setConnectTimeoutMillis(elkConfiguration.getConnectTimeoutMs())
                 .setReadTimeoutMillis(elkConfiguration.getReadTimeoutMs())
                 .setLayout(
@@ -89,6 +105,12 @@ public class Log4j2Elk {
                 loggerConfig.addAppender(asyncHttpElasticsearchAppender, null, null)
         );
         log.info("asynchronously sending log messages to {}", url);
+        elkConfiguration.getApiKeyId()
+                .ifPresent(apiKeyId -> {
+                    if (elkConfiguration.isSecure()) {
+                        log.info("authenticating using ApiKey ID: {}", apiKeyId);
+                    }
+                });
         elkConfiguration.getAdditionalFields().forEach((key, value) -> log.info("{}: {}", key, value));
         return elkConfiguration;
     }

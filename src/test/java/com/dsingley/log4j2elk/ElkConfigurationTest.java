@@ -1,6 +1,9 @@
 package com.dsingley.log4j2elk;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.util.Base64;
 
 import static com.dsingley.log4j2elk.ElkConfiguration.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,5 +29,55 @@ class ElkConfigurationTest {
                 () -> assertThat(configuration.getAsyncQueueFullPolicy()).isEqualTo(DEFAULT_ASYNC_QUEUE_FULL_POLICY),
                 () -> assertThat(configuration.getDiscardThreshold().name()).isEqualTo(DEFAULT_DISCARD_THRESHOLD.name())
         );
+    }
+
+    @Nested
+    class ExtractIdFromApiKey {
+
+        @Test
+        void should_return_null_when_apiKey_is_null() {
+            String id = ElkConfiguration.extractIdFromApiKey(null);
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_null_when_apiKey_is_empty() {
+            String id = ElkConfiguration.extractIdFromApiKey("");
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_null_when_apiKey_is_not_a_base64_encoded_value() {
+            String id = ElkConfiguration.extractIdFromApiKey("not base64 encoded");
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_null_when_decoded_apiKey_does_not_contain_a_colon() {
+            String apiKey = Base64.getEncoder().encodeToString("id".getBytes());
+            String id = ElkConfiguration.extractIdFromApiKey(apiKey);
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_null_when_decoded_apiKey_does_not_contain_two_parts() {
+            String apiKey = Base64.getEncoder().encodeToString("id:".getBytes());
+            String id = ElkConfiguration.extractIdFromApiKey(apiKey);
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_null_when_decoded_apiKey_contains_more_than_two_parts() {
+            String apiKey = Base64.getEncoder().encodeToString("id:secret:extra".getBytes());
+            String id = ElkConfiguration.extractIdFromApiKey(apiKey);
+            assertThat(id).isNull();
+        }
+
+        @Test
+        void should_return_id_when_decoded_apiKey_is_valid() {
+            String apiKey = Base64.getEncoder().encodeToString("id:secret".getBytes());
+            String id = ElkConfiguration.extractIdFromApiKey(apiKey);
+            assertThat(id).isEqualTo("id");
+        }
     }
 }

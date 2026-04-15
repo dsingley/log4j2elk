@@ -22,9 +22,9 @@ public static void main(String[] args) {
 ## Environment Variable Configuration
 
 Configuring `Log4j2Elk` consistently across multiple applications or services within your organization to forward
-message to [log data streams](https://www.elastic.co/guide/en/elasticsearch/reference/current/logs-data-stream.html)
+messages to [log data streams](https://www.elastic.co/guide/en/elasticsearch/reference/current/logs-data-stream.html)
 may be accomplished using an [`EnvironmentVariableElkConfigurationProvider`](src/main/java/com/dsingley/log4j2elk/EnvironmentVariableElkConfigurationProvider.java)
-which externalizes most configuration options and will add three additional fields to indexed documents.
+which externalizes most configuration options and will add five additional fields to indexed documents.
 
 Configure a "service" or application name in your code and then set environment variables appropriate for your
 deployment(s):
@@ -39,7 +39,7 @@ public static void main(String[] args) {
 }
 ```
 
-The environment variables and single line of code shown above would results in log messages being added to a log data
+The environment variables and single line of code shown above would result in log messages being added to a log data
 stream `logs-exampleservice-production` with the following additional fields:
 
 | index field | value                                              |
@@ -47,6 +47,17 @@ stream `logs-exampleservice-production` with the following additional fields:
 | service     | `example-service`                                  |
 | environment | `production`                                       |
 | instance    | `24cd960f31694a11a982a09a3554e6c9` (a random UUID) |
+| host.ip     | `192.168.1.42`                                     |
+| host.name   | `example-service-001.example.com`                  |
+
+## Elasticsearch Authentication
+
+[`ElkConfiguration`](src/main/java/com/dsingley/log4j2elk/ElkConfiguration.java) includes an `apiKey` field that can be
+used to authenticate to Elasticsearch using an [API key](https://www.elastic.co/docs/deploy-manage/api-keys/elasticsearch-api-keys).
+[`EnvironmentVariableElkConfigurationProvider`](src/main/java/com/dsingley/log4j2elk/EnvironmentVariableElkConfigurationProvider.java)
+can configure this value via an `ELK_ELASTICSEARCH_API_KEY` environment variable.
+
+**Note:** `Log4j2Elk` will not use a provided `apiKey` unless the configuration is secure (`baseUrl` starts with `https://`).
 
 ## Tuning [`HttpAppender`](https://logging.apache.org/log4j/2.x/manual/appenders/network.html#HttpAppender) and [`AsyncAppender`](https://logging.apache.org/log4j/2.x/manual/appenders/delegating.html#AsyncAppender)
 

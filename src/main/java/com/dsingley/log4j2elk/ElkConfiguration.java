@@ -6,7 +6,9 @@ import lombok.NonNull;
 import lombok.Singular;
 import org.apache.logging.log4j.Level;
 
+import java.util.Base64;
 import java.util.Map;
+import java.util.Optional;
 
 @Builder
 @Getter
@@ -31,6 +33,7 @@ public class ElkConfiguration {
 
     @Builder.Default boolean enabled = DEFAULT_ENABLED;
     @NonNull String baseUrl;
+    String apiKey;
     @NonNull String indexName;
     @Singular Map<String, String> additionalFields;
     @Builder.Default int connectTimeoutMs = DEFAULT_CONNECT_TIMEOUT_MS;
@@ -47,5 +50,35 @@ public class ElkConfiguration {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean isSecure() {
+        return baseUrl.startsWith("https://");
+    }
+
+    public Optional<String> getApiKey() {
+        return Optional.ofNullable(apiKey);
+    }
+
+    public Optional<String> getApiKeyId() {
+        return Optional.ofNullable(extractIdFromApiKey(apiKey));
+    }
+
+    // visible fore testing
+    static String extractIdFromApiKey(String apiKey) {
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            return null;
+        }
+        String decodedApiKey;
+        try {
+            decodedApiKey = new String(Base64.getDecoder().decode(apiKey));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+        String[] split = decodedApiKey.split(":");
+        if (split.length == 2) {
+            return split[0];
+        }
+        return null;
     }
 }

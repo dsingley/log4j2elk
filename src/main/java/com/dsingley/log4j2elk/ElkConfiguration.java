@@ -108,7 +108,7 @@ public class ElkConfiguration {
                 .orElse(null);
     }
 
-    // visible fore testing
+    // visible for testing
     static String validateApiKeyAndExtractId(String apiKey) throws IllegalArgumentException {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             return null;

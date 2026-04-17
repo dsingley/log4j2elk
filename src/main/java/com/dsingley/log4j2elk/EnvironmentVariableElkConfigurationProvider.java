@@ -18,6 +18,10 @@ import static com.dsingley.log4j2elk.ElkConfiguration.*;
  * <p>
  * <code>apiKey</code> from the environment variable <code>ELK_ELASTICSEARCH_API_KEY</code>.
  * <p>
+ * <code>truststorePath</code> from the environment variable <code>ELK_TRUSTSTORE_PATH</code>.
+ * <p>
+ * <code>truststorePassword</code> from the environment variable <code>ELK_TRUSTSTORE_PASSWORD</code>.
+ * <p>
  * <code>enabled</code> unless the environment variable <code>ELK_ENABLED</code> is set
  * and not equal to <code>true</code>.
  */
@@ -26,6 +30,8 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
     private static final String ELASTICSEARCH_BASE_URL = "ELK_ELASTICSEARCH_BASE_URL";
     private static final String DEFAULT_ELASTICSEARCH_BASE_URL = "http://localhost:9200";
     private static final String ELASTICSEARCH_API_KEY = "ELK_ELASTICSEARCH_API_KEY";
+    private static final String TRUSTSTORE_PATH = "ELK_TRUSTSTORE_PATH";
+    private static final String TRUSTSTORE_PASSWORD = "ELK_TRUSTSTORE_PASSWORD";
     private static final String ENVIRONMENT = "ELK_ENVIRONMENT";
     private static final String DEFAULT_ENVIRONMENT = "production";
     public static final String FIELD_SERVICE = "service";
@@ -113,6 +119,8 @@ public class EnvironmentVariableElkConfigurationProvider implements ElkConfigura
                 .enabled(getOrDefault(ENABLED, DEFAULT_ENABLED, Boolean::parseBoolean))
                 .baseUrl(baseUrl)
                 .apiKey(System.getenv(ELASTICSEARCH_API_KEY))
+                .truststorePath(System.getenv(TRUSTSTORE_PATH))
+                .truststorePassword(System.getenv(TRUSTSTORE_PASSWORD))
                 .indexName(indexName)
                 .additionalField(FIELD_SERVICE, service)
                 .additionalField(FIELD_ENVIRONMENT, environment)

@@ -15,7 +15,7 @@
             <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="test.one" level="info" additivity="false">
+        <Logger name="com.dsingley.testpki" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
 

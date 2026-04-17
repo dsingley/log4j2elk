@@ -34,6 +34,8 @@ public class ElkConfiguration {
     @Builder.Default boolean enabled = DEFAULT_ENABLED;
     @NonNull String baseUrl;
     String apiKey;
+    String truststorePath;
+    String truststorePassword;
     @NonNull String indexName;
     @Singular Map<String, String> additionalFields;
     @Builder.Default int connectTimeoutMs = DEFAULT_CONNECT_TIMEOUT_MS;
@@ -62,6 +64,14 @@ public class ElkConfiguration {
 
     public Optional<String> getApiKeyId() {
         return Optional.ofNullable(extractIdFromApiKey(apiKey));
+    }
+
+    public Optional<String> getTruststorePath() {
+        return Optional.ofNullable(truststorePath);
+    }
+
+    public Optional<String> getTruststorePassword() {
+        return Optional.ofNullable(truststorePassword);
     }
 
     // visible fore testing

@@ -53,6 +53,45 @@ class EnvironmentVariableElkConfigurationProviderTest {
     }
 
     @Test
+    @SetEnvironmentVariable(key = "ELK_ELASTICSEARCH_BASE_URL", value = "http://es:9200")
+    void testBaseUrl() {
+        ElkConfigurationProvider provider = new EnvironmentVariableElkConfigurationProvider("test-base-url-service");
+        ElkConfiguration configuration = provider.getElkConfiguration();
+
+        assertThat(configuration.getBaseUrl()).isEqualTo("http://es:9200");
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "ELK_ELASTICSEARCH_API_KEY", value = "YXBpLWtleS1pZDpzZWNyZXQtdmFsdWU=")
+    void testApiKey() {
+        ElkConfigurationProvider provider = new EnvironmentVariableElkConfigurationProvider("test-api-key-service");
+        ElkConfiguration configuration = provider.getElkConfiguration();
+
+        assertAll(
+                () -> assertThat(configuration.getApiKey()).hasValue("YXBpLWtleS1pZDpzZWNyZXQtdmFsdWU="),
+                () -> assertThat(configuration.getApiKeyId()).hasValue("api-key-id")
+        );
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "ELK_TRUSTSTORE_PATH", value = "/etc/pki/java/cacerts")
+    void testTruststorePath() {
+        ElkConfigurationProvider provider = new EnvironmentVariableElkConfigurationProvider("test-truststore-path-service");
+        ElkConfiguration configuration = provider.getElkConfiguration();
+
+        assertThat(configuration.getTruststorePath()).hasValue("/etc/pki/java/cacerts");
+    }
+
+    @Test
+    @SetEnvironmentVariable(key = "ELK_TRUSTSTORE_PASSWORD", value = "changeit")
+    void testTruststorePassword() {
+        ElkConfigurationProvider provider = new EnvironmentVariableElkConfigurationProvider("test-truststore-password-service");
+        ElkConfiguration configuration = provider.getElkConfiguration();
+
+        assertThat(configuration.getTruststorePassword()).hasValue("changeit");
+    }
+
+    @Test
     @SetEnvironmentVariable(key = "ELK_ENVIRONMENT", value = "env1")
     void testEnvironment() {
         ElkConfigurationProvider provider = new EnvironmentVariableElkConfigurationProvider("test-environment-service");

@@ -145,8 +145,8 @@ public class Log4j2Elk {
     // visible for testing
     static void unconfigure() {
         LoggerContext loggerContext = LoggerContext.getContext(false);
-        Configuration configuration = loggerContext.getConfiguration();
-        ((AbstractConfiguration) configuration).removeAppender(ASYNC_HTTP_ELASTICSEARCH_APPENDER_NAME);
-        ((AbstractConfiguration) configuration).removeAppender(HTTP_ELASTICSEARCH_APPENDER_NAME);
+        AbstractConfiguration abstractConfiguration = (AbstractConfiguration) loggerContext.getConfiguration();
+        abstractConfiguration.removeAppender(ASYNC_HTTP_ELASTICSEARCH_APPENDER_NAME);
+        abstractConfiguration.removeAppender(HTTP_ELASTICSEARCH_APPENDER_NAME);
     }
 }

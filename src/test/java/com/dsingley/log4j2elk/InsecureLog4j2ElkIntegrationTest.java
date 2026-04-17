@@ -2,6 +2,7 @@ package com.dsingley.log4j2elk;
 
 import lombok.extern.slf4j.Slf4j;
 import mockwebserver3.RecordedRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Base64;
@@ -12,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
 public class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest {
+
+    @BeforeEach
+    void setUp() throws Exception {
+        super.setUp();
+        mockWebServer.start(0);
+    }
 
     @Test
     void should_post_to_elasticsearch() throws Exception {
@@ -31,10 +38,8 @@ public class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTe
 
         assertAll(
                 () -> assertThat(request.getMethod()).isEqualTo("POST"),
-                () -> assertThat(request.getPath()).isEqualTo("/insecure/_doc/")
+                () -> assertThat(request.getUrl().encodedPath()).isEqualTo("/insecure/_doc/")
         );
-
-        Log4j2Elk.unconfigure();
     }
 
     @Test
@@ -57,10 +62,8 @@ public class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTe
 
         assertAll(
                 () -> assertThat(request.getMethod()).isEqualTo("POST"),
-                () -> assertThat(request.getPath()).isEqualTo("/insecure/_doc/"),
+                () -> assertThat(request.getUrl().encodedPath()).isEqualTo("/insecure/_doc/"),
                 () -> assertThat(request.getHeaders().get("Authorization")).isNull()
         );
-
-        Log4j2Elk.unconfigure();
     }
 }

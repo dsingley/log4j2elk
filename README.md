@@ -59,6 +59,9 @@ can configure this value via an `ELK_ELASTICSEARCH_API_KEY` environment variable
 
 **Note:** `Log4j2Elk` will not use a provided `apiKey` unless the configuration is secure (`baseUrl` starts with `https://`).
 
+`truststorePath` (`ELK_TRUSTSTORE_PATH`) and `truststorePassword` (`ELK_TRUSTSTORE_PASSWORD`) can be used to configure
+the truststore used to validate the Elasticsearch server's certificate.
+
 ## Tuning [`HttpAppender`](https://logging.apache.org/log4j/2.x/manual/appenders/network.html#HttpAppender) and [`AsyncAppender`](https://logging.apache.org/log4j/2.x/manual/appenders/delegating.html#AsyncAppender)
 
 `Log4j2Elk` relies on these two Log4j components to forward messages to Elasticsearch and has selected several default

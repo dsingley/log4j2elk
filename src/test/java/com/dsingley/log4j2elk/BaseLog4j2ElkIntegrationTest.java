@@ -14,7 +14,7 @@ public abstract class BaseLog4j2ElkIntegrationTest {
     protected MockWebServer mockWebServer;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(new Dispatcher() {
             @NotNull
@@ -22,7 +22,7 @@ public abstract class BaseLog4j2ElkIntegrationTest {
             public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) {
                 System.out.println(recordedRequest.getRequestLine());
                 System.out.println(recordedRequest.getHeaders());
-                System.out.println(recordedRequest.getBody().readUtf8());
+                System.out.println(recordedRequest.getBody().utf8());
                 return new MockResponse.Builder().code(200).build();
             }
         });
@@ -30,9 +30,9 @@ public abstract class BaseLog4j2ElkIntegrationTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        Thread.sleep(1000); // wait for asynchronous log messages to be flushed
+        Log4j2Elk.unconfigure();
         if (mockWebServer != null) {
-            mockWebServer.shutdown();
+            mockWebServer.close();
         }
     }
 

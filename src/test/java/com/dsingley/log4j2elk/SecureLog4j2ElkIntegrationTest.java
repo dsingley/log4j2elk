@@ -18,9 +18,10 @@ public class SecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest
     private static final TestPKI TEST_PKI = new TestPKI(KeyType.RSA_2048, null);
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         super.setUp();
         mockWebServer.useHttps(TEST_PKI.getOrCreateServerCertificate().getSSLSocketFactory());
+        mockWebServer.start(0);
     }
 
     @Test
@@ -43,10 +44,8 @@ public class SecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest
 
         assertAll(
                 () -> assertThat(request.getMethod()).isEqualTo("POST"),
-                () -> assertThat(request.getPath()).isEqualTo("/secure/_doc/")
+                () -> assertThat(request.getUrl().encodedPath()).isEqualTo("/secure/_doc/")
         );
-
-        Log4j2Elk.unconfigure();
     }
 
     @Test
@@ -71,10 +70,8 @@ public class SecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest
 
         assertAll(
                 () -> assertThat(request.getMethod()).isEqualTo("POST"),
-                () -> assertThat(request.getPath()).isEqualTo("/secure/_doc/"),
+                () -> assertThat(request.getUrl().encodedPath()).isEqualTo("/secure/_doc/"),
                 () -> assertThat(request.getHeaders().get("Authorization")).isEqualTo("ApiKey " + apiKey)
         );
-
-        Log4j2Elk.unconfigure();
     }
 }

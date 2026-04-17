@@ -42,7 +42,7 @@
         <junit-pioneer.version>1.9.1</junit-pioneer.version>
         <assertj.version>3.27.7</assertj.version>
         <testpki.version>0.5.0</testpki.version>
-        <okhttp3.version>5.0.0-alpha.14</okhttp3.version>
+        <okhttp3.version>5.3.2</okhttp3.version>
 
         <maven-surefire.version>3.5.5</maven-surefire.version>
         <maven-source.version>3.4.0</maven-source.version>
@@ -61,6 +61,13 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-bom</artifactId>
+                <version>${okhttp3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

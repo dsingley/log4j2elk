@@ -46,7 +46,7 @@ public class ElkConfiguration {
     @Getter String asyncQueueFullPolicy;
     @Getter Level discardThreshold;
 
-    @Builder
+    @Builder(toBuilder = true)
     public ElkConfiguration(
             Boolean enabled,
             @NonNull String baseUrl,

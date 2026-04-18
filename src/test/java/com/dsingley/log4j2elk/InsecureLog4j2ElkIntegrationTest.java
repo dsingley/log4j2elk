@@ -66,4 +66,32 @@ public class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTe
                 () -> assertThat(request.getHeaders().get("Authorization")).isNull()
         );
     }
+
+    @Test
+    void should_include_values_from_EnvironmentVariableElkConfigurationProvider() throws Exception {
+        String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
+
+        EnvironmentVariableElkConfigurationProvider configurationProvider = new EnvironmentVariableElkConfigurationProvider("integration-test");
+        ElkConfiguration configuration = configurationProvider.getElkConfiguration()
+                .toBuilder()
+                .baseUrl(getBaseUrl()) // override the base URL with current MockWebServer instance
+                .build();
+
+        Log4j2Elk.configure(configuration);
+
+        log.debug(methodName);
+
+        RecordedRequest request = mockWebServer.takeRequest(1, TimeUnit.SECONDS);
+        assertThat(request).isNotNull();
+
+        assertAll(
+                () -> assertThat(request.getMethod()).isEqualTo("POST"),
+                () -> assertThat(request.getUrl().encodedPath()).isEqualTo("/logs-integrationtest-production/_doc/"),
+                () -> assertThat(request.getBody().utf8()).contains("\"service\":\"integration-test\""),
+                () -> assertThat(request.getBody().utf8()).contains("\"environment\":\"production\""),
+                () -> assertThat(request.getBody().utf8()).contains("\"instance\":\"" + configuration.getValue("instance") +"\""),
+                () -> assertThat(request.getBody().utf8()).contains("\"host.ip\":\"" + configuration.getValue("host.ip") +"\""),
+                () -> assertThat(request.getBody().utf8()).contains("\"host.name\":\"" + configuration.getValue("host.name") +"\"")
+         );
+    }
 }

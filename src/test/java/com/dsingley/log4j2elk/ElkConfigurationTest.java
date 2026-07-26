@@ -52,7 +52,6 @@ class ElkConfigurationTest {
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> ElkConfiguration.validateApiKeyAndExtractId("not base64 encoded"))
                     .withMessageContaining("not a base64 encoded string");
-            ;
         }
 
         @Test

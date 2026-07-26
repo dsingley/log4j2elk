@@ -14,6 +14,7 @@ public abstract class BaseLog4j2ElkIntegrationTest {
     protected MockWebServer mockWebServer;
 
     @BeforeEach
+    @SuppressWarnings("java:S1130") // extending classes may throw
     void setUp() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.setDispatcher(new Dispatcher() {
@@ -29,7 +30,7 @@ public abstract class BaseLog4j2ElkIntegrationTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         Log4j2Elk.unconfigure();
         if (mockWebServer != null) {
             mockWebServer.close();

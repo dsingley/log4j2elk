@@ -12,8 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
-public class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest {
+class InsecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest {
 
+    @Override
     @BeforeEach
     void setUp() throws Exception {
         super.setUp();

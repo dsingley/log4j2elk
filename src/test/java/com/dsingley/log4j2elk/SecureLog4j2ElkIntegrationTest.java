@@ -14,9 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
-public class SecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest {
+class SecureLog4j2ElkIntegrationTest extends BaseLog4j2ElkIntegrationTest {
     private static final TestPKI TEST_PKI = new TestPKI(KeyType.RSA_2048, null);
 
+    @Override
     @BeforeEach
     void setUp() throws Exception {
         super.setUp();
